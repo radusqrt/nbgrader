@@ -93,6 +93,9 @@ def get_partial_grade(output, max_points, log=None):
             log.warning(warning_msg)
         return max_points
 
+def is_octave_error(output):
+    return output.output_type == 'stream' and output.name == 'stdout' and output.text[:6] == 'error:'
+
 
 def determine_grade(cell: NotebookNode, log: Logger = None) -> Tuple[Optional[float], float]:
     if not is_grade(cell):
@@ -115,7 +118,7 @@ def determine_grade(cell: NotebookNode, log: Logger = None) -> Tuple[Optional[fl
         # 3. output is something else, or nothing (full credit).
         for output in cell.outputs:
             # option 1: error, return 0
-            if output.output_type == 'error':
+            if output.output_type == 'error' or is_octave_error(output):
                 return 0, max_points
             # if not error, then check for option 2, partial credit
             if output.output_type == 'execute_result':

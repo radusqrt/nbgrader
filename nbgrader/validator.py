@@ -117,6 +117,8 @@ class Validator(LoggingConfigurable):
             for output in cell.outputs:
                 if output.output_type == "error":
                     errors.append("\n".join(output.traceback))
+                elif output.output_type == "stream" and output.name == "stdout":
+                    errors.append(output.text)
 
             if len(errors) == 0:
                 if utils.is_grade(cell):
